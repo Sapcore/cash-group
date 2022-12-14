@@ -3,7 +3,7 @@
 
 Necessary data:
 1. File named "1.txt" - Sber yur extract in .txt format
-2. File named "2.txt" - Mdk yur extract in .txt format
+2. File named "2.txt" - Mdl yur extract in .txt format
 3. File named "3.txt" - Sber fiz extract in .txt format (export .pdf as 'plain text')
 4. File named "4.csv" - Tin fiz extract in .csv format
 
