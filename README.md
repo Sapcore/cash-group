@@ -15,4 +15,10 @@ Stored files:
 5. 'main.py' - python master-script running all the scripts above
 
 How to run:
-1. run the 'main.py' script with all the necessary data files located in the same directory as the scipt files
+1. Run the 'main.py' script with all the necessary data files located in the same directory as the scipt files
+_________________________________________________________
+ToDo:
+1. Edit 'source_combiner.py' so the keywords list woudl be read from separate file
+2. Maybe it is not necessary to extract interim .csv's but extract the 'grouped_cabbage' only
+3. Otherwise, Tin_Fiz.csv should also be extracted.
+4. Maybe it is a good idea to combine 'to_csv_sber_yur.py' and 'to_csv_mdl_yur.py' into one script, but I like the idea of separate scripts for separate files (for now)
