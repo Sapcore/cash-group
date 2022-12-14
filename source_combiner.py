@@ -56,20 +56,43 @@ df['whopays'] = df.apply(lambda row: row.whopays.replace('ОБЩЕСТВО С О
 df['whogets'] = df.apply(lambda row: row.whogets.replace('ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ', 'ООО'), axis=1)
 
 # ________________________ start grouping ________________________
-# enter the keywords
+# enter the keywords (read from file)
 # create list with sub-dfs
 # fill the list in case if keyword matches the payment reference (case insensitive)
+# if there are several words in one group, try different words then concatenate two sub-df's and delete the latter
 # delete these rows from initial df
 # as result, initial df should contain 'other' payments only
 cabbage = df.copy()
-key_words = ['зачисление', 'аренд', 'комунал', 'комисси', 'зар', 'хоз', 'рекла', 'страховые']
+k_file = open('keywords.txt', 'r', encoding='utf-8')
+keywords = []
+for line in k_file:
+    keywords.append(line.replace('\n', ''))
+for i in range(len(keywords)):
+    keywords[i] = keywords[i].split()
+print(keywords)
+
 grouped_cabbage = []
-for word in key_words:
-    try:
-        grouped_cabbage.append(cabbage[cabbage['reference'].str.contains(word, case=False)])
-        cabbage = cabbage.drop(grouped_cabbage[-1].index)
-    except:
-        continue
+for words in keywords:
+    if len(words) == 1:
+        try:
+            grouped_cabbage.append(cabbage[cabbage['reference'].str.contains(words[0], case=False)])
+            cabbage = cabbage.drop(grouped_cabbage[-1].index)
+        except:
+            continue
+    else:
+        try:
+            grouped_cabbage.append(cabbage[cabbage['reference'].str.contains(words[0], case=False)])
+            cabbage = cabbage.drop(grouped_cabbage[-1].index)
+        except:
+            continue
+        for i in range(1, len(words)):
+            try:
+                grouped_cabbage.append(cabbage[cabbage['reference'].str.contains(words[i], case=False)])
+                cabbage = cabbage.drop(grouped_cabbage[-1].index)
+                grouped_cabbage[-2] = pd.concat([grouped_cabbage[-2], grouped_cabbage[-1]])
+                grouped_cabbage = grouped_cabbage[:-1]
+            except:
+                continue
 
 # export df in .csv
 # create empty file
@@ -79,11 +102,11 @@ for word in key_words:
 with open('grouped_cabbage.csv', 'w', newline='', encoding='windows-1251') as file:
     writer = csv.writer(file)
 
-for i in range(len(key_words)):
+for i in range(len(keywords)):
     with open('grouped_cabbage.csv', 'a', newline='', encoding='windows-1251') as file:
         writer = csv.writer(file)
         writer.writerow([])
-        writer.writerow([key_words[i].capitalize()])
+        writer.writerow([' '.join(words for words in keywords[i])])
     grouped_cabbage[i].to_csv('grouped_cabbage.csv', index=False, mode='a', encoding='windows-1251')
 
 with open('grouped_cabbage.csv', 'a', newline='', encoding='windows-1251') as file:
